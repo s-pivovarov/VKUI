@@ -186,8 +186,10 @@ export const Cell: FC<CellProps> = (props: CellProps) => {
                 checked={checked}
                 disabled={disabled}
               />
-              <Icon24CheckCircleOff vkuiClass="Cell__marker Cell__marker--off" />
-              <Icon24CheckCircleOn vkuiClass="Cell__marker Cell__marker--on" />
+              {checked || checked === undefined && defaultChecked
+                ? <Icon24CheckCircleOn vkuiClass="Cell__marker Cell__marker--on" />
+                : <Icon24CheckCircleOff vkuiClass="Cell__marker Cell__marker--off" />
+              }
             </Fragment>
           )}
           {before}
