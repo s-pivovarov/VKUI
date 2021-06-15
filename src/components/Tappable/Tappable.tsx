@@ -405,19 +405,13 @@ class Tappable extends Component<TappableProps, TappableState> {
       /* eslint-enable */
       props.getRootRef = this.getRef;
 
-      switch (Component) {
-        case 'a':
-        case 'button':
-        case 'input':
-        case 'label':
-          break;
-        default:
-          props.tabIndex = restProps.tabIndex !== undefined ? restProps.tabIndex : 0;
+      const accessibleComponents: any[] = ['a', 'button', 'input', 'label'];
+      if (!accessibleComponents.includes(Component)) {
+        props.tabIndex = restProps.tabIndex !== undefined ? restProps.tabIndex : 0;
 
-          if (restProps.role) {
-            props.onKeyDown = this.onKeyDown;
-          }
-          break;
+        if (restProps.role) {
+          props.onKeyDown = this.onKeyDown;
+        }
       }
     } else {
       props.ref = this.getRef;
