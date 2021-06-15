@@ -1,9 +1,32 @@
 .Tappable {
   position: relative;
+  outline-offset: 2px;
 }
 
 .Tappable:not([disabled]) {
   cursor: pointer;
+}
+
+.Tappable:focus {
+  outline: none;
+}
+
+/**
+ * focus-visible
+ */
+.AppRoot--focus-visible .Tappable--focus-visible-outline:focus {
+  outline: 2px solid var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .Tappable {
+    outline-offset: 0;
+  }
+
+  .AppRoot--focus-visible .Tappable--focus-visible-outline:focus {
+    transition: outline-offset .1s ease;
+    outline-offset: 2px;
+  }
 }
 
 /**
