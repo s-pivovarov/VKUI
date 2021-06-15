@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDOM } from './dom';
+import { useDOM } from '../lib/dom';
 
 export function useKeyboardInputTracker(): boolean {
   const { document } = useDOM();
