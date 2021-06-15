@@ -43,11 +43,11 @@ export interface TappableProps extends AllHTMLAttributes<HTMLElement>, HasRootRe
    */
   hoverMode?: 'opacity' | 'background' | string;
   /**
-   * @ignore Указывает, должен ли компонент показывать focus ring при навигации с клавиатуры
+   * @ignore Временное свойство для работы над доступностью. Указывает, должен ли компонент показывать focus ring при навигации с клавиатуры.
    */
   hasFocusVisible?: boolean;
   /**
-   * @ignore Стиль подсветки outline-состояния. Если передать произвольную строку, она добавится как css-класс
+   * @ignore Стиль подсветки focus-visible состояния. Если передать произвольную строку, она добавится как css-класс
    */
   focusVisibleMode?: 'outline' | string;
 }

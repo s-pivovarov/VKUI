@@ -14,10 +14,16 @@
 /**
  * focus-visible
  */
+/* [a11y] show outline without animation by default */
 .AppRoot--focus-visible .Tappable--focus-visible-outline:focus {
   outline: 2px solid var(--accent);
 }
 
+/* [a11y]
+ * add animation for browsers that support prefers-reduced-motion
+ * so that users with vestibular motion disorders have no problem
+ * navigating accessible vkui apps via keyboard
+ */
 @media (prefers-reduced-motion: no-preference) {
   .Tappable {
     outline-offset: 0;
