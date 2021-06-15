@@ -35,6 +35,14 @@ export interface TappableProps extends AllHTMLAttributes<HTMLElement>, HasRootRe
    * Стиль подсветки hover-состояния. Если передать произвольную строку, она добавится как css-класс во время hover
    */
   hoverMode?: 'opacity' | 'background' | string;
+  /**
+   * @ignore Указывает, должен ли компонент показывать focus ring при навигации с клавиатуры
+   */
+  hasFocusVisible?: boolean;
+  /**
+   * @ignore Стиль подсветки outline-состояния. Если передать произвольную строку, она добавится как css-класс
+   */
+  focusVisibleMode?: 'outline' | string;
 }
 
 export interface TappableState {
@@ -120,6 +128,8 @@ class Tappable extends Component<TappableProps, TappableState> {
     role: 'button',
     stopPropagation: false,
     disabled: false,
+    hasFocusVisible: false,
+    focusVisibleMode: 'outline',
     hasHover,
     hoverMode: 'background',
     hasActive: true,
@@ -306,23 +316,42 @@ class Tappable extends Component<TappableProps, TappableState> {
 
   render() {
     const { clicks, active, hovered, hasHover, hasActive } = this.state;
-    const { children, Component, activeEffectDelay,
-      stopPropagation, getRootRef, platform, sizeX, hasMouse, hasHover: propsHasHover, hoverMode, hasActive: propsHasActive, activeMode, ...restProps } = this.props;
+    const {
+      children,
+      Component,
+      activeEffectDelay,
+      stopPropagation,
+      getRootRef,
+      platform,
+      sizeX,
+      hasMouse,
+      hasHover: propsHasHover,
+      hoverMode,
+      hasActive: propsHasActive,
+      activeMode,
+      hasFocusVisible,
+      focusVisibleMode,
+      ...restProps
+    } = this.props;
 
     const isPresetHoverMode = ['opacity', 'background'].includes(hoverMode);
     const isPresetActiveMode = ['opacity', 'background'].includes(activeMode);
+    const isPresetFocusVisibleMode = focusVisibleMode === 'outline';
 
     const classes = classNames(
       getClassName('Tappable', platform),
       `Tappable--sizeX-${sizeX}`,
       {
+        'Tappable--mouse': hasMouse,
         'Tappable--active': hasActive && active,
         'Tappable--inactive': !active,
-        'Tappable--mouse': hasMouse,
+        'Tappable--focus-visible': hasFocusVisible,
         [`Tappable--hover-${hoverMode}`]: hasHover && hovered && isPresetHoverMode,
         [`Tappable--active-${activeMode}`]: hasActive && active && isPresetActiveMode,
+        [`Tappable--focus-visible-${focusVisibleMode}`]: hasFocusVisible && isPresetFocusVisibleMode,
         [hoverMode]: hasHover && hovered && !isPresetHoverMode,
         [activeMode]: hasActive && active && !isPresetActiveMode,
+        [focusVisibleMode]: hasFocusVisible && !isPresetFocusVisibleMode,
       });
 
     const RootComponent = restProps.disabled
