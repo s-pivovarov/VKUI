@@ -1,4 +1,11 @@
-import React, { AllHTMLAttributes, Component, ElementType, RefCallback } from 'react';
+import React, {
+  AllHTMLAttributes,
+  Component,
+  ElementType,
+  KeyboardEventHandler,
+  KeyboardEvent,
+  RefCallback,
+} from 'react';
 import Touch, { TouchEvent, TouchEventHandler, TouchProps } from '../Touch/Touch';
 import TouchRootContext from '../Touch/TouchContext';
 import { classNames } from '../../lib/classNames';
@@ -138,10 +145,40 @@ class Tappable extends Component<TappableProps, TappableState> {
   };
 
   /*
+   * Обрабатывает событие onkeydown для кастомных доступных элементов
+   */
+  onKeyDown: KeyboardEventHandler = (e: KeyboardEvent<HTMLElement>) => {
+    const { role, onKeyDown } = this.props;
+
+    switch (e.nativeEvent.key.toUpperCase()) {
+      case 'ENTER':
+        const clickableOnEnter = ['button', 'link'];
+
+        if (clickableOnEnter.includes(role)) {
+          this.container.click();
+        }
+        break;
+      case 'SPACEBAR':
+      case ' ':
+        if (role === 'button') {
+          this.container.click();
+        }
+        break;
+      default:
+        break;
+    }
+
+    if (typeof onKeyDown === 'function') {
+      return onKeyDown(e);
+    }
+  };
+
+  /*
    * Обрабатывает событие touchstart
    */
   onStart: TouchEventHandler = ({ originalEvent }: TouchEvent) => {
     !this.insideTouchRoot && this.props.stopPropagation && originalEvent.stopPropagation();
+
     if (this.state.hasActive) {
       if (originalEvent.touches && originalEvent.touches.length > 1) {
         deactivateOtherInstances();
@@ -367,6 +404,21 @@ class Tappable extends Component<TappableProps, TappableState> {
       props.onEnd = this.onEnd;
       /* eslint-enable */
       props.getRootRef = this.getRef;
+
+      switch (Component) {
+        case 'a':
+        case 'button':
+        case 'input':
+        case 'label':
+          break;
+        default:
+          props.tabIndex = restProps.tabIndex !== undefined ? restProps.tabIndex : 0;
+
+          if (restProps.role) {
+            props.onKeyDown = this.onKeyDown;
+          }
+          break;
+      }
     } else {
       props.ref = this.getRef;
     }
