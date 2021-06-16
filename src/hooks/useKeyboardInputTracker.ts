@@ -1,39 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDOM } from '../lib/dom';
+import { useGlobalEventListener } from './useGlobalEventListener';
 
 export function useKeyboardInputTracker(): boolean {
   const { document } = useDOM();
 
   const [isKeyboardInputActive, toggleKeyboardInput] = useState<boolean>(true);
 
-  useEffect(() => {
-    const enableKeyboardInput = ({ key }: KeyboardEvent) => {
-      if (key.toUpperCase() === 'TAB') {
-        toggleKeyboardInput(true);
-      }
-    };
-
-    const disableKeyboardInput = () => {
-      toggleKeyboardInput(false);
-    };
-
-    const eventOptions = {
-      passive: true,
-      capture: true,
-    };
-
-    document.addEventListener('keydown', enableKeyboardInput, eventOptions);
-
-    document.addEventListener('mousedown', disableKeyboardInput, eventOptions);
-    document.addEventListener('touchstart', disableKeyboardInput, eventOptions);
-
-    return () => {
-      document.removeEventListener('keydown', enableKeyboardInput, eventOptions);
-
-      document.removeEventListener('mousedown', disableKeyboardInput, eventOptions);
-      document.removeEventListener('touchstart', disableKeyboardInput, eventOptions);
-    };
+  const enableKeyboardInput = useCallback(({ key }: KeyboardEvent) => {
+    if (key.toUpperCase() === 'TAB') {
+      toggleKeyboardInput(true);
+    }
   }, []);
+
+  const disableKeyboardInput = useCallback(() => {
+    toggleKeyboardInput(false);
+  }, []);
+
+  const eventOptions = {
+    passive: true,
+    capture: true,
+  };
+
+  useGlobalEventListener(document, 'keydown', enableKeyboardInput, eventOptions);
+  useGlobalEventListener(document, 'mousedown', disableKeyboardInput, eventOptions);
+  useGlobalEventListener(document, 'touchstart', disableKeyboardInput, eventOptions);
 
   return isKeyboardInputActive;
 }
