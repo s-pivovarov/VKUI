@@ -375,13 +375,11 @@ class Tappable extends Component<TappableProps, TappableState> {
         'Tappable--mouse': hasMouse,
         'Tappable--active': hasActive && active,
         'Tappable--inactive': !active,
-        'Tappable--focus-visible': hasFocusVisible,
         [`Tappable--hover-${hoverMode}`]: hasHover && hovered && isPresetHoverMode,
         [`Tappable--active-${activeMode}`]: hasActive && active && isPresetActiveMode,
         [`Tappable--focus-visible-${focusVisibleMode}`]: hasFocusVisible && isPresetFocusVisibleMode,
         [hoverMode]: hasHover && hovered && !isPresetHoverMode,
         [activeMode]: hasActive && active && !isPresetActiveMode,
-        [focusVisibleMode]: hasFocusVisible && !isPresetFocusVisibleMode,
       });
 
     const RootComponent = restProps.disabled
@@ -436,6 +434,7 @@ class Tappable extends Component<TappableProps, TappableState> {
                     {...touchProps}
                     {...restProps}
                     vkuiClass={classes}
+                    data-vkui-focus-visible={hasFocusVisible && !isPresetFocusVisibleMode ? focusVisibleMode : null}
                     {...props}>
                     <TappableContext.Provider
                       value={{
