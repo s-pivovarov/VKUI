@@ -145,31 +145,24 @@ class Tappable extends Component<TappableProps, TappableState> {
   };
 
   /*
-   * Обрабатывает событие onkeydown для кастомных доступных элементов
+   * [a11y]
+   * Обрабатывает событие onkeydown
+   * для кастомных доступных элементов:
+   * - role="link" (активация по Enter)
+   * - role="button" (активация по Space и Enter)
    */
   onKeyDown: KeyboardEventHandler = (e: KeyboardEvent<HTMLElement>) => {
     const { role, onKeyDown } = this.props;
+    const { key } = e.nativeEvent;
 
-    switch (e.nativeEvent.key.toUpperCase()) {
-      case 'ENTER':
-        const clickableOnEnter = ['button', 'link'];
-
-        if (clickableOnEnter.includes(role)) {
-          this.container.click();
-        }
-        break;
-      case 'SPACEBAR':
-      case ' ':
-        if (role === 'button') {
-          this.container.click();
-        }
-        break;
-      default:
-        break;
+    if (key === 'Enter' || (key === ' ' || key === 'Spacebar') && role === 'button') {
+      this.container.click();
     }
 
-    if (typeof onKeyDown === 'function') {
-      return onKeyDown(e);
+    {
+      if (typeof onKeyDown === 'function') {
+        return onKeyDown(e);
+      }
     }
   };
 
@@ -405,11 +398,15 @@ class Tappable extends Component<TappableProps, TappableState> {
       /* eslint-enable */
       props.getRootRef = this.getRef;
 
-      const accessibleComponents: any[] = ['a', 'button', 'input', 'label'];
-      if (!accessibleComponents.includes(Component)) {
+      /*
+       * [a11y]
+       * Проставляет tabindex и подменяет onKeyDown для нужных кастомных доступных элементов
+       */
+      const nativeComponents: ElementType[] = ['a', 'button', 'input', 'textarea', 'label'];
+      if (!nativeComponents.includes(Component) && !restProps.contentEditable) {
         props.tabIndex = restProps.tabIndex !== undefined ? restProps.tabIndex : 0;
 
-        if (restProps.role) {
+        if (restProps.role === 'button' || restProps.role === 'link') {
           props.onKeyDown = this.onKeyDown;
         }
       }
