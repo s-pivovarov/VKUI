@@ -18,6 +18,7 @@ import { withPlatform } from '../../hoc/withPlatform';
 import { hasHover } from '@vkontakte/vkjs/lib/InputUtils';
 import { setRef } from '../../lib/utils';
 import { withAdaptivity, AdaptivityProps } from '../../hoc/withAdaptivity';
+import { shouldTriggerClickOnEnterOrSpace } from '../../lib/accessibility';
 
 export interface TappableProps extends AllHTMLAttributes<HTMLElement>, HasRootRef<HTMLElement>, HasPlatform, AdaptivityProps {
   Component?: ElementType;
@@ -152,10 +153,10 @@ class Tappable extends Component<TappableProps, TappableState> {
    * - role="button" (активация по Space и Enter)
    */
   onKeyDown: KeyboardEventHandler = (e: KeyboardEvent<HTMLElement>) => {
-    const { role, onKeyDown } = this.props;
-    const { key } = e.nativeEvent;
+    const { onKeyDown } = this.props;
 
-    if (key === 'Enter' || (key === ' ' || key === 'Spacebar') && role === 'button') {
+    if (shouldTriggerClickOnEnterOrSpace(e)) {
+      e.preventDefault();
       this.container.click();
     }
 
