@@ -1,6 +1,5 @@
 .Tappable {
   position: relative;
-  outline-offset: 2px;
 }
 
 .Tappable:not([disabled]) {
@@ -14,9 +13,30 @@
 /**
  * focus-visible
  */
+/* [a11y] add outline w/ rounded corners via pseudo elements */
+.AppRoot--focus-visible .Tappable--focus-visible-outline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 2px var(--accent);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
 /* [a11y] show outline without animation by default */
-.AppRoot--focus-visible .Tappable--focus-visible-outline:focus {
-  outline: 2px solid var(--accent);
+.AppRoot--focus-visible .Tappable--focus-visible-outline:focus::before {
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  opacity: 1;
 }
 
 /* [a11y]
@@ -25,13 +45,8 @@
  * navigating accessible vkui apps via keyboard
  */
 @media (prefers-reduced-motion: no-preference) {
-  .Tappable {
-    outline-offset: 0;
-  }
-
-  .AppRoot--focus-visible .Tappable--focus-visible-outline:focus {
-    transition: outline-offset .1s ease;
-    outline-offset: 2px;
+  .AppRoot--focus-visible .Tappable--focus-visible-outline:focus::before {
+    transition: top .15s ease, left .15s ease, right .15s ease, bottom .15s ease;
   }
 }
 
